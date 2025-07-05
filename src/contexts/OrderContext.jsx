@@ -144,32 +144,27 @@ export const OrderProvider = ({ children }) => {
   };
 
   const calculateEstimatedTime = (distance) => {
-    // Base time: 15 minutes for pickup + 2 minutes per km
     const baseTime = 15;
     const timePerKm = 2;
     const estimatedMinutes = baseTime + (distance * timePerKm);
-    
     const hours = Math.floor(estimatedMinutes / 60);
     const minutes = Math.round(estimatedMinutes % 60);
-    
     if (hours > 0) {
-      return `${hours} saat ${minutes} dakika`;
+      return `${hours} ${t('time.hours', 'час')} ${minutes} ${t('time.minutes', 'минут')}`;
     }
-    return `${minutes} dakika`;
+    return `${minutes} ${t('time.minutes', 'минут')}`;
   };
 
   const createOrder = async (orderData) => {
     const distance = await calculateDistance(orderData.pickupLocation, orderData.deliveryLocation);
-
     if (distance === null || typeof distance === 'undefined') {
         toast({
-            title: "Sipariş Oluşturulamadı",
-            description: "Konumlar arası mesafe hesaplanırken bir sorun oluştu. Lütfen tekrar deneyin.",
-            variant: "destructive",
+            title: t('toast.order_creation_failed_distance_title'),
+            description: t('toast.order_creation_failed_distance_description'),
+            variant: "destructive"
         });
         return null;
     }
-
     const price = calculatePrice(distance, orderData.promoCode);
     const estimatedTime = calculateEstimatedTime(distance);
     
@@ -202,7 +197,6 @@ export const OrderProvider = ({ children }) => {
       title: t('toast.order_created'),
       description: t('toast.order_created_description', { id: newOrder.id, price: price }),
     });
-
     return newOrder;
   };
 
@@ -212,7 +206,6 @@ export const OrderProvider = ({ children }) => {
         ? { ...order, status: 'accepted', courierId, courierName, acceptedAt: new Date().toISOString() }
         : order
     ));
-    
     toast({
       title: t('toast.order_accepted'),
       description: t('toast.order_accepted_description', { id: orderId }),
@@ -225,12 +218,10 @@ export const OrderProvider = ({ children }) => {
         ? { ...order, status, updatedAt: new Date().toISOString() }
         : order
     ));
-    
     const statusMessages = {
       'in-transit': t('toast.order_status_in_transit'),
       'delivered': t('toast.order_status_delivered'),
     };
-    
     toast({
       title: t('toast.order_updated'),
       description: statusMessages[status] || t('toast.order_status_updated', { status }),
@@ -243,7 +234,6 @@ export const OrderProvider = ({ children }) => {
         ? { ...order, rating, ratingComment: comment, ratedAt: new Date().toISOString() }
         : order
     ));
-
     const newRating = {
       id: Date.now().toString(),
       orderId,
@@ -251,49 +241,44 @@ export const OrderProvider = ({ children }) => {
       comment,
       createdAt: new Date().toISOString(),
     };
-
     setRatings(prev => [newRating, ...prev]);
-    
     toast({
-      title: "Değerlendirme Gönderildi",
-      description: "Siparişiniz başarıyla değerlendirildi.",
+      title: t('toast.rating_submitted_title'),
+      description: t('toast.rating_submitted_description'),
     });
   };
 
   const updatePricingRules = (newRules) => {
     setPricingRules(newRules);
-    toast({
-      title: "Fiyatlandırma Güncellendi",
-      description: "Fiyatlandırma kuralları başarıyla güncellendi.",
-    });
+    // AdminDashboard.jsx içinde toast gösteriliyor.
   };
 
   const addPromoCode = (promoCode) => {
     setPromoCodes(prev => [...prev, { ...promoCode, usedCount: 0 }]);
     toast({
-      title: "Promosyon Kodu Eklendi",
-      description: "Yeni promosyon kodu başarıyla eklendi.",
+      title: t('toast.promocode_added_title'),
+      description: t('toast.promocode_added_description'),
     });
   };
 
   const deletePromoCode = (code) => {
     setPromoCodes(prev => prev.filter(p => p.code !== code));
     toast({
-      title: "Promosyon Kodu Silindi",
-      description: "Promosyon kodu başarıyla silindi.",
+      title: t('toast.promocode_deleted_title'),
+      description: t('toast.promocode_deleted_description'),
     });
   };
 
   const validatePromoCode = (code) => {
     const promo = promoCodes.find(p => p.code === code);
-    if (!promo) return { valid: false, message: "Geçersiz promosyon kodu" };
-    if (promo.usedCount >= promo.maxUses) return { valid: false, message: "Promosyon kodu kullanım limiti doldu" };
+    if (!promo) return { valid: false, messageKey: "toast.invalid_promo_code", message: t("toast.invalid_promo_code") };
+    if (promo.usedCount >= promo.maxUses) return { valid: false, messageKey: "toast.promo_code_limit_exceeded", message: t("toast.promo_code_limit_exceeded") };
     return { valid: true, promo };
   };
 
   const getOrderHistory = (userId, role) => {
     if (role === 'customer') {
-      return orders.filter(order => order.userId === userId);
+      return orders.filter(order => order.customerId === userId); // customerId olarak düzeltildi
     } else if (role === 'courier') {
       return orders.filter(order => order.courierId === userId);
     }
