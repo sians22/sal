@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label'; // Label eklendi
 // Textarea importu kaldırılacak, standart textarea kullanılacak
 import { useAddresses } from '@/contexts/AddressContext'; // AddressContext import edildi
-import { Edit2, Trash2, Home, Plus } from 'lucide-react'; // Yeni ikonlar, Plus eklendi
+import { Edit2, Trash2, Home } from 'lucide-react'; // Yeni ikonlar, mükerrer Plus kaldırıldı
 import AddressFormModal from '@/components/customer/AddressFormModal'; // Modal import edildi
 
 const CustomerDashboard = () => {
