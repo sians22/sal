@@ -191,7 +191,7 @@ logger.error = (msg, options) => {
 
 export default defineConfig({
 	customLogger: logger,
-	base: '/sal/', // GitHub Pages için base ayarı
+	// base: '/sal/', // Netlify için bu ayar genellikle '/' (varsayılan) olmalıdır.
 	plugins: [
 		...(isDev ? [inlineEditPlugin(), editModeDevPlugin()] : []),
 		react(),
