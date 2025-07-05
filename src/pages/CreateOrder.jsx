@@ -13,10 +13,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import MapComponent from '@/components/MapComponent';
 import { useTranslation } from 'react-i18next';
 import APP_CONFIG from '@/config/settings';
+import { useAddresses } from '@/contexts/AddressContext'; // useAddresses import edildi
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Select import edildi
+import { Home } from 'lucide-react'; // İkon için
 
 const CreateOrder = () => {
   const { user } = useAuth();
   const { createOrder, calculateDistance, calculatePrice, calculateEstimatedTime, validatePromoCode } = useOrders();
+  const { addresses, isLoadingAddresses } = useAddresses(); // Adresler alındı
   const { sendNotification } = useNotifications();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -75,10 +79,32 @@ const CreateOrder = () => {
   };
 
   const handleLocationSelect = (location, type) => {
+    // location objesi { lat, lng, addressString? } olabilir
     setFormData(prev => ({
       ...prev,
       [type]: location
     }));
+  };
+
+  const handleFavoriteAddressSelect = (addressId, type) => {
+    if (!addressId) return;
+
+    const selectedAddress = addresses.find(addr => addr.id === addressId);
+    if (selectedAddress) {
+      setFormData(prev => ({
+        ...prev,
+        [type]: {
+          lat: selectedAddress.coordinates.lat,
+          lng: selectedAddress.coordinates.lng,
+          addressString: selectedAddress.addressString
+        }
+      }));
+
+      toast({
+        title: t('address.favorite_selected_title', 'Favori Adres Seçildi'),
+        description: t('address.favorite_selected_desc', `Konum '${selectedAddress.name}' (${type === 'pickupLocation' ? t('create_order.pickup_location_short', 'Alış') : t('create_order.delivery_location_short', 'Teslimat')}) olarak ayarlandı.`),
+      });
+    }
   };
 
   const handlePromoCodeApply = () => {
@@ -265,27 +291,65 @@ const CreateOrder = () => {
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-blue-400" />
-                        <Label className="text-white">{t('create_order.pickup_location')}</Label>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-5 h-5 text-blue-400" />
+                          <Label className="text-white">{t('create_order.pickup_location')}</Label>
+                        </div>
+                        {!isLoadingAddresses && addresses && addresses.length > 0 && (
+                          <Select onValueChange={(value) => handleFavoriteAddressSelect(value, 'pickupLocation')}>
+                            <SelectTrigger className="w-auto bg-white/10 border-white/20 text-white h-8 text-xs px-2">
+                              <SelectValue placeholder={t('address.select_from_favorites_short', 'Favorilerden Seç')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="">{t('address.select_placeholder', 'Bir adres seçin...')}</SelectItem>
+                              {addresses.map(addr => (
+                                <SelectItem key={addr.id} value={addr.id}>
+                                  <div className="flex items-center">
+                                    <Home size={14} className="mr-2" /> {addr.name}
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                       <MapComponent
                         onLocationSelect={(location) => handleLocationSelect(location, 'pickupLocation')}
                         selectedLocation={formData.pickupLocation}
-                        placeholder={t('create_order.select_pickup')}
+                        placeholder={t('map.search_address_placeholder_pickup', 'Alış adresini arayın veya haritadan seçin')}
                         apiKey={APP_CONFIG.YANDEX_MAPS.API_KEY}
                       />
                     </div>
 
                     <div className="space-y-4">
-                      <div className="flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-green-400" />
-                        <Label className="text-white">{t('create_order.delivery_location')}</Label>
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-5 h-5 text-green-400" />
+                          <Label className="text-white">{t('create_order.delivery_location')}</Label>
+                        </div>
+                        {!isLoadingAddresses && addresses && addresses.length > 0 && (
+                           <Select onValueChange={(value) => handleFavoriteAddressSelect(value, 'deliveryLocation')}>
+                            <SelectTrigger className="w-auto bg-white/10 border-white/20 text-white h-8 text-xs px-2">
+                              <SelectValue placeholder={t('address.select_from_favorites_short', 'Favorilerden Seç')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                               <SelectItem value="">{t('address.select_placeholder', 'Bir adres seçin...')}</SelectItem>
+                              {addresses.map(addr => (
+                                <SelectItem key={addr.id} value={addr.id}>
+                                   <div className="flex items-center">
+                                    <Home size={14} className="mr-2" /> {addr.name}
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
                       </div>
                       <MapComponent
                         onLocationSelect={(location) => handleLocationSelect(location, 'deliveryLocation')}
                         selectedLocation={formData.deliveryLocation}
-                        placeholder={t('create_order.select_delivery')}
+                        placeholder={t('map.search_address_placeholder_delivery', 'Teslimat adresini arayın veya haritadan seçin')}
                         apiKey={APP_CONFIG.YANDEX_MAPS.API_KEY}
                       />
                     </div>

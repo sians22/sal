@@ -12,17 +12,26 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label'; // Label eklendi
 // Textarea importu kaldırılacak, standart textarea kullanılacak
+import { useAddresses } from '@/contexts/AddressContext'; // AddressContext import edildi
+import { Edit2, Trash2, Home, Plus } from 'lucide-react'; // Yeni ikonlar, Plus eklendi
+import AddressFormModal from '@/components/customer/AddressFormModal'; // Modal import edildi
 
 const CustomerDashboard = () => {
   const { user, logout } = useAuth();
-  const { getOrderHistory, rateOrder } = useOrders(); // getAverageRating kaldırıldı, burada kullanılmıyor
+  const { getOrderHistory, rateOrder } = useOrders();
   const { getUnreadCount } = useNotifications();
   const { t } = useTranslation();
+  const { addresses, deleteAddress, isLoadingAddresses } = useAddresses(); // Adres context'inden al
   
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [rating, setRating] = useState(5);
   const [ratingComment, setRatingComment] = useState('');
   const [showRatingDialog, setShowRatingDialog] = useState(false);
+
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [editingAddress, setEditingAddress] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [addressToDelete, setAddressToDelete] = useState(null);
   
   const myOrders = getOrderHistory(user.id, 'customer');
   const pendingOrders = myOrders.filter(order => order.status === 'pending');
@@ -71,6 +80,30 @@ const CustomerDashboard = () => {
   const formatDate = (dateString) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleString(t('locale_code', 'ru-RU')); // i18n'den locale kodu alınabilir
+  };
+
+  const handleAddNewAddress = () => {
+    setEditingAddress(null);
+    setShowAddressModal(true);
+  };
+
+  const handleEditAddress = (address) => {
+    setEditingAddress(address);
+    setShowAddressModal(true);
+  };
+
+  const handleDeleteAddressClick = (address) => {
+    setAddressToDelete(address);
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDeleteAddress = () => {
+    if (addressToDelete) {
+      deleteAddress(addressToDelete.id);
+      toast({ title: t('address.delete_success_title', 'Адрес удален'), description: t('address.delete_success_message', `Адрес '${addressToDelete.name}' успешно удален.`)});
+    }
+    setShowDeleteConfirm(false);
+    setAddressToDelete(null);
   };
 
   return (
@@ -248,6 +281,109 @@ const CustomerDashboard = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Adreslerim Bölümü (Grid dışına alındı, yeni satırda) */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        className="mt-8"
+      >
+        <Card className="glass-effect border-white/20">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-white">{t('customer.dashboard.my_addresses_title', 'Мои адреса')}</CardTitle>
+              <CardDescription className="text-gray-300">{t('customer.dashboard.my_addresses_description', 'Управляйте сохраненными адресами')}</CardDescription>
+            </div>
+            <Button onClick={handleAddNewAddress} className="bg-gradient-to-r from-green-500 to-teal-500">
+              <Plus className="w-4 h-4 mr-2" />{t('customer.dashboard.add_new_address_button', 'Добавить новый адрес')}
+            </Button>
+          </CardHeader>
+          <CardContent>
+            {isLoadingAddresses ? (
+              <p className="text-center text-gray-400">{t('loading', 'Загрузка...')}</p>
+            ) : addresses.length === 0 ? (
+              <div className="text-center py-8">
+                <Home className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                <p className="text-gray-400 mb-4">{t('customer.dashboard.no_addresses', 'У вас нет сохраненных адресов.')}</p>
+                <Button onClick={handleAddNewAddress} className="bg-gradient-to-r from-green-500 to-teal-500">
+                  {t('customer.dashboard.add_first_address_button', 'Добавить свой первый адрес')}
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {addresses.map((address) => (
+                  <div key={address.id} className="p-4 bg-white/5 rounded-lg flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                    <div className="mb-2 sm:mb-0">
+                      <h3 className="font-semibold text-white flex items-center">
+                        <MapPin className="w-4 h-4 mr-2 text-blue-400 flex-shrink-0" />
+                        {address.name}
+                      </h3>
+                      <p className="text-sm text-gray-300 ml-6">{address.addressString}</p>
+                      <p className="text-xs text-gray-400 ml-6">
+                        {t('coordinates_short', 'Коорд.')}: {address.coordinates.lat.toFixed(4)}, {address.coordinates.lng.toFixed(4)}
+                      </p>
+                    </div>
+                    <div className="flex gap-2 self-end sm:self-center">
+                      <Button variant="outline" size="icon" onClick={() => handleEditAddress(address)} className="text-blue-300 border-blue-300 hover:bg-blue-500/20 h-9 w-9">
+                        <Edit2 className="w-4 h-4" />
+                      </Button>
+                      <Button variant="destructive" size="icon" onClick={() => handleDeleteAddressClick(address)} className="h-9 w-9">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Adres Silme Onay Modalı */}
+      <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+        <DialogContent className="bg-gray-900 border-white/20">
+          <DialogHeader>
+            <DialogTitle className="text-white">{t('address.delete_confirm_title', 'Удалить адрес?')}</DialogTitle>
+            <DialogDescription className="text-gray-300">
+              {t('address.delete_confirm_message', `Вы уверены, что хотите удалить адрес '${addressToDelete?.name}'? Это действие нельзя отменить.`)}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" onClick={() => setShowDeleteConfirm(false)} className="bg-white/10 border-white/20">{t('cancel', 'Отмена')}</Button>
+            <Button variant="destructive" onClick={confirmDeleteAddress}>{t('delete', 'Удалить')}</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Adres Ekleme/Düzenleme Modalı (Bir sonraki adımda oluşturulacak AddressFormModal buraya gelecek) */}
+      {showAddressModal && (
+        <Dialog open={showAddressModal} onOpenChange={setShowAddressModal}>
+          <DialogContent className="bg-gray-900 border-white/20 sm:max-w-[625px]"> {/* Modal genişliği ayarlandı */}
+            <DialogHeader>
+              <DialogTitle className="text-white">
+                {editingAddress
+                  ? t('address.edit_modal_title', 'Редактировать адрес')
+                  : t('address.add_modal_title', 'Добавить новый адрес')}
+              </DialogTitle>
+              <DialogDescription className="text-gray-300">
+                {editingAddress
+                  ? t('address.edit_modal_description', 'Измените данные адреса ниже.')
+                  : t('address.add_modal_description', 'Заполните данные нового адреса.')}
+              </DialogDescription>
+            </DialogHeader>
+            <AddressFormModal
+              addressToEdit={editingAddress}
+              closeModal={() => setShowAddressModal(false)}
+              onSaveSuccess={() => {
+                // Adresler listesini yenilemek için bir şey yapmaya gerek yok,
+                // AddressContext zaten güncelleniyor ve CustomerDashboard bunu yansıtacaktır.
+                // Sadece modalı kapatmak yeterli.
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 };

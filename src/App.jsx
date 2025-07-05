@@ -6,6 +6,7 @@
     import { AuthProvider, useAuth } from '@/contexts/AuthContext';
     import { OrderProvider } from '@/contexts/OrderContext';
     import { NotificationProvider } from '@/contexts/NotificationContext';
+    import { AddressProvider } from '@/contexts/AddressContext'; // AddressProvider import edildi
     import LoginPage from '@/pages/LoginPage';
     import CustomerDashboard from '@/pages/CustomerDashboard';
     import CourierDashboard from '@/pages/CourierDashboard';
@@ -104,15 +105,17 @@
           <AuthProvider>
             <OrderProvider>
               <NotificationProvider>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <div className="min-h-screen">
-                    <div className="absolute top-4 right-4 z-50">
+                <AddressProvider> {/* AddressProvider eklendi */}
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <div className="min-h-screen">
+                      <div className="absolute top-4 right-4 z-50">
                        <LanguageSwitcher />
                     </div>
                     <AppRoutes />
                     <Toaster />
                   </div>
                 </Suspense>
+                </AddressProvider> {/* AddressProvider kapatıldı */}
               </NotificationProvider>
             </OrderProvider>
           </AuthProvider>

@@ -129,6 +129,18 @@ const MapComponent = ({ onLocationSelect, selectedLocation, placeholder, apiKey 
     fetchSuggestions(searchQuery);
   }, [searchQuery, fetchSuggestions]);
 
+  useEffect(() => {
+    if (mapInstance && selectedLocation && typeof selectedLocation.lat === 'number' && typeof selectedLocation.lng === 'number') {
+      const newCoords = [selectedLocation.lat, selectedLocation.lng];
+      mapInstance.setCenter(newCoords, 15);
+      updatePlacemark(newCoords, selectedLocation.addressString || t('map.location_selected'));
+    } else if (mapInstance && !selectedLocation && placemark) {
+      mapInstance.geoObjects.remove(placemark);
+      setPlacemark(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLocation, mapInstance, t]); // updatePlacemark ve placemark bağımlılıktan çıkarıldı döngü riskine karşı
+
   const useCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
