@@ -11,7 +11,7 @@
     import CourierDashboard from '@/pages/CourierDashboard';
     import AdminDashboard from '@/pages/AdminDashboard';
     import CreateOrder from '@/pages/CreateOrder';
-    import LanguageSwitcher from '@/components/LanguageSwitcher';
+    // import LanguageSwitcher from '@/components/LanguageSwitcher'; // Dil değiştirici kaldırıldı
     import { useTranslation } from 'react-i18next';
     import './i18n';
     
@@ -106,9 +106,9 @@
               <NotificationProvider>
                 <Suspense fallback={<div>Loading...</div>}>
                   <div className="min-h-screen">
-                    <div className="absolute top-4 right-4 z-50">
+                    {/* <div className="absolute top-4 right-4 z-50">
                        <LanguageSwitcher />
-                    </div>
+                    </div> */} {/* Dil değiştirici kaldırıldı */}
                     <AppRoutes />
                     <Toaster />
                   </div>

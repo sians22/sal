@@ -19,6 +19,7 @@ const CreateOrder = () => {
   const { sendNotification } = useNotifications();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { APP_CONFIG } = await import('@/config/settings');
   
   const [formData, setFormData] = useState({
     description: '',
@@ -35,9 +36,6 @@ const CreateOrder = () => {
   const [estimatedTime, setEstimatedTime] = useState(null);
   const [promoValidation, setPromoValidation] = useState(null);
   const [appliedPromo, setAppliedPromo] = useState(null);
-
-  // Yandex Maps API Key - Replace with your actual API key
-  const YANDEX_MAPS_API_KEY = 'your-yandex-maps-api-key';
 
   useEffect(() => {
     if (formData.pickupLocation && formData.deliveryLocation) {
@@ -250,7 +248,7 @@ const CreateOrder = () => {
                         onLocationSelect={(location) => handleLocationSelect(location, 'pickupLocation')}
                         selectedLocation={formData.pickupLocation}
                         placeholder={t('create_order.select_pickup')}
-                        apiKey={YANDEX_MAPS_API_KEY}
+                        apiKey={APP_CONFIG.YANDEX_MAPS.API_KEY}
                       />
                     </div>
 
@@ -263,7 +261,7 @@ const CreateOrder = () => {
                         onLocationSelect={(location) => handleLocationSelect(location, 'deliveryLocation')}
                         selectedLocation={formData.deliveryLocation}
                         placeholder={t('create_order.select_delivery')}
-                        apiKey={YANDEX_MAPS_API_KEY}
+                        apiKey={APP_CONFIG.YANDEX_MAPS.API_KEY}
                       />
                     </div>
                   </div>
