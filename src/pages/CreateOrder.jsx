@@ -12,6 +12,7 @@ import { useNotifications } from '@/contexts/NotificationContext';
 import { Link, useNavigate } from 'react-router-dom';
 import MapComponent from '@/components/MapComponent';
 import { useTranslation } from 'react-i18next';
+import APP_CONFIG from '@/config/settings';
 
 const CreateOrder = () => {
   const { user } = useAuth();
@@ -36,21 +37,34 @@ const CreateOrder = () => {
   const [promoValidation, setPromoValidation] = useState(null);
   const [appliedPromo, setAppliedPromo] = useState(null);
 
-  // Yandex Maps API Key - Replace with your actual API key
-  const YANDEX_MAPS_API_KEY = 'your-yandex-maps-api-key';
-
   useEffect(() => {
-    if (formData.pickupLocation && formData.deliveryLocation) {
-      const dist = calculateDistance(formData.pickupLocation, formData.deliveryLocation);
-      const time = calculateEstimatedTime(dist);
-      const basePrice = calculatePrice(dist);
-      const finalPrice = calculatePrice(dist, appliedPromo?.code);
-      
-      setDistance(dist);
-      setOriginalPrice(basePrice);
-      setEstimatedPrice(finalPrice);
-      setEstimatedTime(time);
-    }
+    const updateOrderDetails = async () => {
+      if (formData.pickupLocation && formData.deliveryLocation) {
+        const dist = await calculateDistance(formData.pickupLocation, formData.deliveryLocation);
+        if (dist === null) {
+          setDistance(null);
+          setOriginalPrice(null);
+          setEstimatedPrice(null);
+          setEstimatedTime(null);
+          return;
+        }
+        const time = calculateEstimatedTime(dist);
+        const basePrice = calculatePrice(dist);
+        const finalPrice = calculatePrice(dist, appliedPromo?.code);
+
+        setDistance(dist);
+        setOriginalPrice(basePrice);
+        setEstimatedPrice(finalPrice);
+        setEstimatedTime(time);
+      } else {
+        setDistance(null);
+        setOriginalPrice(null);
+        setEstimatedPrice(null);
+        setEstimatedTime(null);
+      }
+    };
+
+    updateOrderDetails();
   }, [formData.pickupLocation, formData.deliveryLocation, appliedPromo, calculateDistance, calculatePrice, calculateEstimatedTime]);
 
   const handleInputChange = (e) => {
@@ -87,10 +101,15 @@ const CreateOrder = () => {
     setPromoValidation(null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!formData.pickupLocation || !formData.deliveryLocation) {
+      toast({
+        title: "Eksik Bilgi",
+        description: "Lütfen alış ve teslimat konumlarını seçin.",
+        variant: "destructive",
+      });
       return;
     }
 
@@ -100,17 +119,21 @@ const CreateOrder = () => {
       promoCode: appliedPromo?.code || null,
     };
 
-    createOrder(orderData);
+    const newOrder = await createOrder(orderData);
     
-    sendNotification(
-      'courier',
-      'notification.new_order',
-      'notification.new_order_description',
-      { description: formData.description },
-      'info'
-    );
-    
-    navigate('/customer');
+    if (newOrder) {
+      sendNotification(
+        'courier',
+        'notification.new_order',
+        'notification.new_order_description',
+        { description: formData.description || 'Yeni bir sipariş' },
+        'info'
+      );
+
+      navigate('/customer');
+    } else {
+      console.error("Sipariş oluşturulamadı.");
+    }
   };
 
   return (
@@ -250,7 +273,7 @@ const CreateOrder = () => {
                         onLocationSelect={(location) => handleLocationSelect(location, 'pickupLocation')}
                         selectedLocation={formData.pickupLocation}
                         placeholder={t('create_order.select_pickup')}
-                        apiKey={YANDEX_MAPS_API_KEY}
+                        apiKey={APP_CONFIG.YANDEX_MAPS.API_KEY}
                       />
                     </div>
 
@@ -263,7 +286,7 @@ const CreateOrder = () => {
                         onLocationSelect={(location) => handleLocationSelect(location, 'deliveryLocation')}
                         selectedLocation={formData.deliveryLocation}
                         placeholder={t('create_order.select_delivery')}
-                        apiKey={YANDEX_MAPS_API_KEY}
+                        apiKey={APP_CONFIG.YANDEX_MAPS.API_KEY}
                       />
                     </div>
                   </div>
