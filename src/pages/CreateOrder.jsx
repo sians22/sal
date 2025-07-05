@@ -12,6 +12,7 @@ import { useNotifications } from '@/contexts/NotificationContext';
 import { Link, useNavigate } from 'react-router-dom';
 import MapComponent from '@/components/MapComponent';
 import { useTranslation } from 'react-i18next';
+import { APP_CONFIG } from '@/config/settings'; // Statik import olarak değiştirildi
 
 const CreateOrder = () => {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ const CreateOrder = () => {
   const { sendNotification } = useNotifications();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { APP_CONFIG } = await import('@/config/settings');
+  // const { APP_CONFIG } = await import('@/config/settings'); // Bu satır kaldırıldı
   
   const [formData, setFormData] = useState({
     description: '',
