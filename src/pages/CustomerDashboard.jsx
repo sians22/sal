@@ -11,7 +11,7 @@ import { useNotifications } from '@/contexts/NotificationContext';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Label } from '@/components/ui/label'; // Label eklendi
-import { Textarea } from '@/components/ui/textarea'; // Textarea eklendi
+// Textarea importu kaldırılacak, standart textarea kullanılacak
 
 const CustomerDashboard = () => {
   const { user, logout } = useAuth();
@@ -238,8 +238,8 @@ const CustomerDashboard = () => {
               </div>
             </div>
             <div>
-              <Label className="text-white">{t('customer.dashboard.comment_label')}</Label>
-              <Textarea value={ratingComment} onChange={(e) => setRatingComment(e.target.value)} className="w-full p-2 rounded bg-white/10 border border-white/20 text-white resize-none" rows={3} placeholder={t('customer.dashboard.comment_placeholder')}/>
+              <Label htmlFor="ratingComment" className="text-white">{t('customer.dashboard.comment_label')}</Label>
+              <textarea id="ratingComment" value={ratingComment} onChange={(e) => setRatingComment(e.target.value)} className="w-full p-2 rounded bg-white/10 border border-white/20 text-white resize-none focus:ring-blue-500 focus:border-blue-500" rows={3} placeholder={t('customer.dashboard.comment_placeholder')}/>
             </div>
             <div className="flex gap-2">
               <Button variant="outline" onClick={() => setShowRatingDialog(false)} className="flex-1 bg-white/10 border-white/20">{t('customer.dashboard.cancel_button')}</Button>
