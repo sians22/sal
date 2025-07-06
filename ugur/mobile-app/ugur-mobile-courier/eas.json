@@ -1,0 +1,42 @@
+{
+  "cli": {
+    "version": ">= 7.6.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "YOUR_DEV_SUPABASE_URL_HERE",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "YOUR_DEV_SUPABASE_ANON_KEY_HERE"
+         популярных"EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY": "NOT_NEEDED_FOR_COURIER_APP_BUT_EXAMPLE"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "YOUR_STAGING_SUPABASE_URL_HERE",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "YOUR_STAGING_SUPABASE_ANON_KEY_HERE"
+      }
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "YOUR_PROD_SUPABASE_URL_HERE",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "YOUR_PROD_SUPABASE_ANON_KEY_HERE"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./path/to/your/courier-google-service-account.json",
+        "track": "internal"
+      },
+      "ios": {
+        "appleId": "your-apple-id@example.com",
+        "ascAppId": "your-courier-apple-app-specific-id",
+        "appleTeamId": "YOUR_APPLE_TEAM_ID"
+      }
+    }
+  }
+}

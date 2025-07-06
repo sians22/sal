@@ -1,0 +1,27 @@
+{
+  "name": "ugur-backend-supabase-client",
+  "version": "1.0.0",
+  "description": "Backend utilities and/or Supabase Edge Functions for Ugur Order Management System",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "supabase",
+    "order-management",
+    "delivery",
+    "backend"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",  // Supabase client kütüphanesi eklendi (versiyon örnektir)
+    "dotenv": "^16.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
