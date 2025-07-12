@@ -1,143 +1,189 @@
-# 🚚 Kurye Yönetim Sistemi (Courier Management System)
+# Courier Management System
 
-Modern, kapsamlı ve kullanıcı dostu bir kurye yönetim sistemi. Müşteri uygulaması, kurye uygulaması ve admin paneli ile tam entegre çözüm.
+A comprehensive mobile-first web application for managing courier services with real-time location tracking, route optimization, and order management.
 
-## 🌟 Özellikler
+## 🚀 Features
 
-### 👥 Müşteri Uygulaması
-- **Kullanıcı Girişi**: Admin paneli üzerinden yönetilen güvenli kimlik doğrulama
-- **Sipariş Oluşturma**: Yandex Maps entegrasyonu ile konum seçimi
-- **Fiyat Hesaplama**: Mesafe bazlı otomatik fiyatlandırma
-- **Promosyon Kodları**: İndirim kodları ile fiyat avantajı
-- **Gerçek Zamanlı Takip**: Sipariş durumu anlık güncellemeler
-- **Sipariş Geçmişi**: Tüm siparişlerin detaylı görüntülenmesi
-- **Kurye Değerlendirme**: 5 yıldızlı rating sistemi
+### User Authentication & Security
+- **Secure Login System**: Role-based authentication (Customer, Courier, Admin)
+- **Session Management**: Automatic session timeout and secure logout
+- **Demo Accounts**: Pre-configured test accounts for all user types
 
-### 🚛 Kurye Uygulaması
-- **Kurye Girişi**: Güvenli kimlik doğrulama sistemi
-- **Yeni Sipariş Bildirimleri**: Anlık push notification
-- **Sipariş Kabul Etme**: Tek tıkla sipariş alma
-- **Durum Güncelleme**: Sipariş durumunu gerçek zamanlı güncelleme
-- **Sipariş Geçmişi**: Tamamlanan siparişlerin görüntülenmesi
-- **Performans Takibi**: Ortalama puan ve istatistikler
+### Order Management
+- **Order Creation**: Intuitive interface for customers to create delivery orders
+- **Location Selection**: Google Maps integration for precise pickup and delivery locations
+- **Real-time Pricing**: Dynamic pricing based on distance with promo code support
+- **Order Tracking**: Real-time status updates and order history
 
-### ⚙️ Admin Paneli
-- **Kullanıcı Yönetimi**: Müşteri ve kurye hesap yönetimi
-- **Sipariş Yönetimi**: Tüm siparişlerin merkezi kontrolü
-- **Fiyatlandırma**: Mesafe bazlı fiyat kuralları
-- **Promosyon Kodları**: İndirim kodları oluşturma ve yönetimi
-- **Bildirim Sistemi**: Toplu bildirim gönderimi
-- **Site Özelleştirme**: Logo, renk ve tema ayarları
-- **İstatistikler**: Detaylı raporlama ve analiz
+### Google Maps Integration
+- **Location Search**: Autocomplete search with Google Places API
+- **Route Display**: Interactive route visualization for couriers
+- **Current Location**: GPS-based location detection and tracking
+- **Navigation**: Direct integration with Google Maps navigation
 
-### 🗺️ Harita Entegrasyonu
-- **Yandex Maps API**: Gerçek zamanlı harita servisleri
-- **Konum Seçimi**: Alış ve teslimat noktası belirleme
-- **Mesafe Hesaplama**: Otomatik rota ve mesafe hesaplama
-- **Mevcut Konum**: GPS ile otomatik konum tespiti
+### Courier Interface
+- **Order Acceptance**: Couriers can accept available orders
+- **Route Visualization**: Real-time route display with current location
+- **Status Updates**: Easy order status management (Pickup → In Transit → Delivered)
+- **Navigation**: One-click navigation to pickup/delivery locations
 
-## 🛠️ Teknoloji Stack
+### Real-time Features
+- **Live Location Tracking**: GPS-based courier location monitoring
+- **Order Notifications**: Instant notifications for new orders and status changes
+- **Real-time Updates**: Live order status and location updates
+
+### Admin Dashboard
+- **Order Management**: Complete order oversight and management
+- **User Management**: Customer and courier account management
+- **Analytics**: Order statistics and performance metrics
+- **System Configuration**: Pricing rules and promo code management
+
+## 🛠️ Technical Stack
 
 ### Frontend
-- **React 18** - Modern UI framework
-- **Vite** - Hızlı build tool
-- **Tailwind CSS** - Utility-first CSS framework
-- **Framer Motion** - Animasyon kütüphanesi
-- **React Router** - Sayfa yönlendirme
-- **React i18next** - Çoklu dil desteği (Türkçe/Rusça)
+- **React 18**: Modern React with hooks and functional components
+- **Vite**: Fast build tool and development server
+- **Tailwind CSS**: Utility-first CSS framework
+- **Framer Motion**: Smooth animations and transitions
+- **Radix UI**: Accessible component primitives
 
-### Harita ve Konum
-- **Yandex Maps API** - Harita servisleri
-- **Geolocation API** - GPS konum tespiti
+### Maps & Location
+- **Google Maps API**: Primary mapping and location services
+- **Google Places API**: Location search and autocomplete
+- **Google Directions API**: Route calculation and optimization
+- **Geolocation API**: Browser-based location services
 
-### UI Bileşenleri
-- **Radix UI** - Erişilebilir UI primitives
-- **Lucide React** - Modern ikon seti
-- **Custom Components** - Özel tasarım bileşenleri
+### State Management
+- **React Context**: Global state management
+- **Zustand**: Lightweight state management for complex data
+- **Local Storage**: Persistent data storage
 
-### Veri Yönetimi
-- **React Context** - State management
-- **LocalStorage** - Veri kalıcılığı
-- **Zustand** - Lightweight state management
+### Internationalization
+- **i18next**: Multi-language support
+- **React i18next**: React integration for translations
 
-## 🚀 Kurulum
+## 📱 Mobile-First Design
 
-### Gereksinimler
+The application is designed with mobile users in mind:
+- **Responsive Design**: Optimized for all screen sizes
+- **Touch-Friendly**: Large touch targets and intuitive gestures
+- **Offline Capability**: Basic functionality without internet connection
+- **PWA Ready**: Progressive Web App features
+
+## 🚀 Getting Started
+
+### Prerequisites
 - Node.js 18+ 
-- npm veya yarn
-- Yandex Maps API anahtarı
+- npm or yarn
+- Google Maps API key
 
-### Adım 1: Projeyi Klonlayın
-```bash
-git clone <repository-url>
-cd kurye-sistemi
-```
+### Installation
 
-### Adım 2: Bağımlılıkları Yükleyin
-```bash
-npm install
-```
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd courier-management-system
+   ```
 
-### Adım 3: Ortam Değişkenlerini Ayarlayın
-`.env` dosyası oluşturun:
-```env
-VITE_YANDEX_MAPS_API_KEY=your-yandex-maps-api-key
-VITE_API_BASE_URL=http://localhost:3001/api
-```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-### Adım 4: Uygulamayı Başlatın
-```bash
-npm run dev
-```
+3. **Environment Setup**
+   Create a `.env` file in the root directory:
+   ```env
+   VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+   VITE_API_BASE_URL=http://localhost:3001/api
+   ```
 
-Uygulama `http://localhost:5173` adresinde çalışacaktır.
+4. **Start Development Server**
+   ```bash
+   npm run dev
+   ```
 
-## 🔑 Yandex Maps API Kurulumu
+5. **Build for Production**
+   ```bash
+   npm run build
+   ```
 
-1. [Yandex Developer Console](https://developer.tech.yandex.ru/) adresine gidin
-2. Yeni bir proje oluşturun
-3. Maps JavaScript API'yi etkinleştirin
-4. API anahtarınızı alın
-5. `.env` dosyasına ekleyin
+## 🔑 API Configuration
 
-## 👤 Demo Hesaplar
+### Google Maps API Setup
 
-Sistemi test etmek için aşağıdaki demo hesapları kullanabilirsiniz:
+1. **Create a Google Cloud Project**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing one
 
-### Admin Hesabı
-- **Kullanıcı Adı**: `admin`
-- **Şifre**: `admin123`
+2. **Enable Required APIs**
+   - Maps JavaScript API
+   - Places API
+   - Directions API
+   - Geocoding API
 
-### Müşteri Hesabı
-- **Kullanıcı Adı**: `customer`
-- **Şifre**: `customer123`
+3. **Create API Key**
+   - Go to Credentials → Create Credentials → API Key
+   - Restrict the key to your domain for security
 
-### Kurye Hesabı
-- **Kullanıcı Adı**: `courier`
-- **Şifre**: `courier123`
+4. **Set Environment Variable**
+   ```env
+   VITE_GOOGLE_MAPS_API_KEY=your_api_key_here
+   ```
 
-## 📱 Mobil Uyumluluk
+## � Demo Accounts
 
-Sistem tamamen responsive tasarıma sahiptir ve mobil cihazlarda mükemmel çalışır:
+The application comes with pre-configured demo accounts:
 
-- **iOS Safari** - Tam destek
-- **Android Chrome** - Tam destek
-- **Progressive Web App (PWA)** - Yüklenebilir uygulama
-- **Offline Mode** - İnternet bağlantısı olmadan da çalışır
+### Admin Account
+- **Username**: `admin`
+- **Password**: `admin123`
+- **Role**: System Administrator
 
-## 🌍 Çoklu Dil Desteği
+### Customer Account
+- **Username**: `musteri1`
+- **Password**: `musteri123`
+- **Role**: Customer
 
-Sistem Türkçe ve Rusça dillerini destekler:
+### Courier Account
+- **Username**: `kurye1`
+- **Password**: `kurye123`
+- **Role**: Courier
 
-- **Türkçe** - Varsayılan dil
-- **Rusça** - Tam çeviri desteği
-- **Dinamik Dil Değiştirme** - Anlık dil değişimi
+## � Usage Guide
 
-## 🔧 Konfigürasyon
+### For Customers
 
-### Fiyatlandırma Kuralları
+1. **Login**: Use customer credentials to access the system
+2. **Create Order**: 
+   - Fill in order details
+   - Select pickup and delivery locations using Google Maps
+   - Apply promo codes if available
+   - Submit order
+3. **Track Order**: Monitor order status and courier location
+4. **Rate Service**: Provide feedback after delivery
+
+### For Couriers
+
+1. **Login**: Use courier credentials to access the system
+2. **View Available Orders**: See pending orders in your area
+3. **Accept Orders**: Click to accept orders you want to deliver
+4. **View Route**: Use the route view to see optimal delivery path
+5. **Update Status**: Mark orders as picked up, in transit, or delivered
+6. **Navigate**: Use integrated navigation to reach destinations
+
+### For Administrators
+
+1. **Login**: Use admin credentials to access the system
+2. **Monitor Orders**: View all orders and their current status
+3. **Manage Users**: Add, edit, or remove customer and courier accounts
+4. **Configure System**: Set pricing rules and manage promo codes
+5. **View Analytics**: Access order statistics and performance metrics
+
+## 🔧 Configuration
+
+### Pricing Rules
+Configure distance-based pricing in `src/config/settings.js`:
 ```javascript
-// src/config/settings.js
 DEFAULT_PRICING: [
   { minDistance: 0, maxDistance: 3, price: 10 },
   { minDistance: 3, maxDistance: 10, price: 15 },
@@ -146,7 +192,8 @@ DEFAULT_PRICING: [
 ]
 ```
 
-### Promosyon Kodları
+### Promo Codes
+Manage promotional codes in the same file:
 ```javascript
 DEFAULT_PROMO_CODES: [
   { code: 'WELCOME10', discount: 10, type: 'percentage', maxUses: 100 },
@@ -154,88 +201,99 @@ DEFAULT_PROMO_CODES: [
 ]
 ```
 
-## 📊 Sipariş Durumları
+## 🌐 Internationalization
 
-1. **Bekliyor** - Sipariş oluşturuldu, kurye bekleniyor
-2. **Kabul Edildi** - Kurye siparişi kabul etti
-3. **Yolda** - Kurye teslimat yolunda
-4. **Teslim Edildi** - Sipariş başarıyla teslim edildi
+The application supports multiple languages through i18next:
+- **English**: Default language
+- **Turkish**: Full translation support
+- **Russian**: Partial translation support
 
-## 🔔 Bildirim Sistemi
+Add new languages by creating translation files in `src/i18n/`.
 
-- **Push Notifications** - Gerçek zamanlı bildirimler
-- **Toast Messages** - Kullanıcı geri bildirimleri
-- **Email Notifications** - E-posta bildirimleri (gelecek özellik)
+## � Security Features
 
-## 🛡️ Güvenlik
+- **Input Validation**: All user inputs are validated
+- **XSS Protection**: Sanitized data rendering
+- **CSRF Protection**: Built-in CSRF token handling
+- **Secure Storage**: Encrypted local storage for sensitive data
+- **API Key Protection**: Environment variable-based API key management
 
-- **Güvenli Kimlik Doğrulama** - Şifreli giriş sistemi
-- **Rol Tabanlı Erişim** - Kullanıcı yetkilendirme
-- **Session Management** - Oturum yönetimi
-- **Input Validation** - Veri doğrulama
+## 📊 Performance Optimization
 
-## 📈 Performans
+- **Code Splitting**: Automatic route-based code splitting
+- **Lazy Loading**: Components loaded on demand
+- **Image Optimization**: Optimized images and icons
+- **Caching**: Intelligent caching strategies
+- **Bundle Optimization**: Minified and compressed assets
 
-- **Lazy Loading** - Sayfa yükleme optimizasyonu
-- **Code Splitting** - Bundle boyutu optimizasyonu
-- **Caching** - Veri önbellekleme
-- **Debouncing** - API çağrı optimizasyonu
+## 🧪 Testing
 
-## 🚀 Production Deployment
-
-### Build
+Run the test suite:
 ```bash
-npm run build
+npm test
 ```
 
-### Deploy
+Run tests in watch mode:
 ```bash
-# Netlify
-netlify deploy --prod --dir=dist
-
-# Vercel
-vercel --prod
-
-# Firebase
-firebase deploy
+npm run test:watch
 ```
 
-## 🔮 Gelecek Özellikler
+## 📦 Deployment
 
-- [ ] **Backend API** - Node.js/Express backend
-- [ ] **Database** - MongoDB/PostgreSQL entegrasyonu
-- [ ] **Real-time Chat** - Müşteri-kurye mesajlaşma
-- [ ] **Payment Gateway** - Online ödeme sistemi
-- [ ] **Analytics Dashboard** - Detaylı analitik
-- [ ] **Mobile App** - React Native uygulaması
-- [ ] **SMS Notifications** - SMS bildirimleri
-- [ ] **Route Optimization** - En uygun rota hesaplama
+### Vercel Deployment
+1. Connect your repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
 
-## 🤝 Katkıda Bulunma
+### Netlify Deployment
+1. Connect your repository to Netlify
+2. Set build command: `npm run build`
+3. Set publish directory: `dist`
+4. Configure environment variables
 
-1. Fork yapın
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Commit yapın (`git commit -m 'Add amazing feature'`)
-4. Push yapın (`git push origin feature/amazing-feature`)
-5. Pull Request oluşturun
+### Docker Deployment
+```bash
+# Build Docker image
+docker build -t courier-system .
 
-## 📄 Lisans
+# Run container
+docker run -p 3000:3000 courier-system
+```
 
-Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için `LICENSE` dosyasına bakın.
+## 🤝 Contributing
 
-## 📞 İletişim
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-- **E-posta**: info@kuryesistemi.com
-- **Telefon**: +90 xxx xxx xx xx
-- **Website**: https://kuryesistemi.com
+## 📄 License
 
-## 🙏 Teşekkürler
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-- [Yandex Maps](https://tech.yandex.com/maps/) - Harita servisleri
-- [React](https://reactjs.org/) - UI framework
-- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
-- [Vite](https://vitejs.dev/) - Build tool
+## 🆘 Support
+
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation
+
+## � Changelog
+
+### Version 2.0.0
+- ✅ Google Maps API integration
+- ✅ Real-time location tracking
+- ✅ Enhanced route visualization
+- ✅ Mobile-optimized interface
+- ✅ Improved notification system
+
+### Version 1.0.0
+- ✅ Basic order management
+- ✅ User authentication
+- ✅ Yandex Maps integration
+- ✅ Admin dashboard
 
 ---
 
-**Kurye Yönetim Sistemi** - Modern kurye hizmetleri için kapsamlı çözüm 🚚✨ 
+**Built with ❤️ for efficient courier management** 

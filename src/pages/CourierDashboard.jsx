@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import { Package, Clock, CheckCircle, Truck, LogOut, Bell, MapPin } from 'lucide-react'; // Plus kaldırıldı, Edit, Trash2, DollarSign, Tag, Palette, Upload da bu dosyada kullanılmıyor.
+import { Package, Clock, CheckCircle, Truck, LogOut, Bell, MapPin, Navigation, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,12 +9,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrders } from '@/contexts/OrderContext';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { useTranslation } from 'react-i18next';
+import CourierRouteView from '@/components/CourierRouteView';
 
 const CourierDashboard = () => {
   const { user, logout } = useAuth();
   const { orders, acceptOrder, updateOrderStatus } = useOrders();
-  const { getUnreadCount, sendNotification } = useNotifications(); // sendNotification burada da kullanılıyor (müşteriye bilgi vermek için)
+  const { getUnreadCount, sendNotification } = useNotifications();
   const { t } = useTranslation();
+  const [selectedOrder, setSelectedOrder] = useState(null);
   
   const availableOrders = orders.filter(order => order.status === 'pending');
   const myOrders = orders.filter(order => order.courierId === user.id);
@@ -224,24 +226,34 @@ const CourierDashboard = () => {
                             <div><p className="text-gray-400">{t('order.price')}</p><p className="text-white">{order.price} {t('currency.rub', 'RUB')}</p></div>
                             <div><p className="text-gray-400">{t('order.distance')}</p><p className="text-white">{order.distance} {t('unit.km', 'км')}</p></div>
                           </div>
-                          {order.status !== 'delivered' && (
-                            <Select value={order.status} onValueChange={(value) => handleStatusUpdate(order.id, value)}>
-                              <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                                <SelectValue placeholder={getStatusText(order.status)} />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {order.status === 'pending' && <SelectItem value="accepted">{t('order.status.accepted')}</SelectItem> /* Kurye pending'i accepted yapamaz, bu zaten acceptOrder ile oluyor. Ama myOrders'a pending düşerse diye.*/}
-                                {order.status === 'accepted' && <SelectItem value="in-transit">{t('order.status.in_transit')}</SelectItem>}
-                                {order.status === 'in-transit' && <SelectItem value="delivered">{t('order.status.delivered')}</SelectItem>}
-                                {/* Kafa karışıklığını önlemek için sadece bir sonraki mantıksal adımı göstermek daha iyi olabilir.
-                                    Örn: accepted ise sadece in-transit ve delivered gösterilebilir.
-                                    Şimdilik tüm geçerli geçişleri listeliyoruz. */}
-                                {order.status !== 'delivered' && order.status !== 'in-transit' && order.status !== 'accepted' && <SelectItem value="accepted" disabled>{t('order.status.accepted')}</SelectItem> /* Mantıken buraya düşmemeli */}
-                                {order.status !== 'delivered' && order.status !== 'in-transit' && <SelectItem value="in-transit" disabled={order.status === 'pending'}>{t('order.status.in_transit')}</SelectItem>}
-                                {order.status !== 'delivered' && <SelectItem value="delivered" disabled={order.status === 'pending'}>{t('order.status.delivered')}</SelectItem>}
-                              </SelectContent>
-                            </Select>
-                          )}
+                          <div className="flex gap-2">
+                            {['accepted', 'in-transit'].includes(order.status) && (
+                              <Button
+                                onClick={() => setSelectedOrder(order)}
+                                variant="outline"
+                                size="sm"
+                                className="flex-1 bg-blue-500/20 border-blue-500/30 text-blue-300 hover:bg-blue-500/30"
+                              >
+                                <Navigation className="w-4 h-4 mr-1" />
+                                {t('courier.view_route')}
+                              </Button>
+                            )}
+                            {order.status !== 'delivered' && (
+                              <Select value={order.status} onValueChange={(value) => handleStatusUpdate(order.id, value)}>
+                                <SelectTrigger className="bg-white/10 border-white/20 text-white">
+                                  <SelectValue placeholder={getStatusText(order.status)} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {order.status === 'pending' && <SelectItem value="accepted">{t('order.status.accepted')}</SelectItem>}
+                                  {order.status === 'accepted' && <SelectItem value="in-transit">{t('order.status.in_transit')}</SelectItem>}
+                                  {order.status === 'in-transit' && <SelectItem value="delivered">{t('order.status.delivered')}</SelectItem>}
+                                  {order.status !== 'delivered' && order.status !== 'in-transit' && order.status !== 'accepted' && <SelectItem value="accepted" disabled>{t('order.status.accepted')}</SelectItem>}
+                                  {order.status !== 'delivered' && order.status !== 'in-transit' && <SelectItem value="in-transit" disabled={order.status === 'pending'}>{t('order.status.in_transit')}</SelectItem>}
+                                  {order.status !== 'delivered' && <SelectItem value="delivered" disabled={order.status === 'pending'}>{t('order.status.delivered')}</SelectItem>}
+                                </SelectContent>
+                              </Select>
+                            )}
+                          </div>
                         </motion.div>
                       ))}
                     </div>
@@ -252,6 +264,45 @@ const CourierDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Route View Modal */}
+      {selectedOrder && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedOrder(null)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gray-900 rounded-lg w-full max-w-4xl max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">
+                  {t('courier.route_view_title', { id: selectedOrder.id })}
+                </h2>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setSelectedOrder(null)}
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <CourierRouteView
+                order={selectedOrder}
+                onStatusUpdate={handleStatusUpdate}
+                onNavigate={() => setSelectedOrder(null)}
+              />
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </>
   );
 };
