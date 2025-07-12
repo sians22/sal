@@ -1,6 +1,15 @@
 // Application Configuration
 export const APP_CONFIG = {
-  // Yandex Maps API Configuration
+  // Google Maps API Configuration
+  GOOGLE_MAPS: {
+    API_KEY: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'your-google-maps-api-key',
+    LANGUAGE: 'en', // English language
+    CENTER: { lat: 41.0082, lng: 28.9784 }, // Istanbul coordinates
+    ZOOM: 10,
+    LIBRARIES: ['places', 'geometry'],
+  },
+
+  // Yandex Maps API Configuration (fallback)
   YANDEX_MAPS: {
     API_KEY: import.meta.env.VITE_YANDEX_MAPS_API_KEY || 'your-yandex-maps-api-key',
     LANGUAGE: 'tr_TR', // Turkish language

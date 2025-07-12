@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useOrders } from '@/contexts/OrderContext';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { Link, useNavigate } from 'react-router-dom';
-import MapComponent from '@/components/MapComponent';
+import GoogleMapComponent from '@/components/GoogleMapComponent';
 import { useTranslation } from 'react-i18next';
 import APP_CONFIG from '@/config/settings';
 import { useAddresses } from '@/contexts/AddressContext'; // useAddresses import edildi
@@ -314,11 +314,10 @@ const CreateOrder = () => {
                           </Select>
                         )}
                       </div>
-                      <MapComponent
+                      <GoogleMapComponent
                         onLocationSelect={(location) => handleLocationSelect(location, 'pickupLocation')}
                         selectedLocation={formData.pickupLocation}
                         placeholder={t('map.search_address_placeholder_pickup', 'Alış adresini arayın veya haritadan seçin')}
-                        apiKey={APP_CONFIG.YANDEX_MAPS.API_KEY}
                       />
                     </div>
 
@@ -346,11 +345,10 @@ const CreateOrder = () => {
                           </Select>
                         )}
                       </div>
-                      <MapComponent
+                      <GoogleMapComponent
                         onLocationSelect={(location) => handleLocationSelect(location, 'deliveryLocation')}
                         selectedLocation={formData.deliveryLocation}
                         placeholder={t('map.search_address_placeholder_delivery', 'Teslimat adresini arayın veya haritadan seçin')}
-                        apiKey={APP_CONFIG.YANDEX_MAPS.API_KEY}
                       />
                     </div>
                   </div>

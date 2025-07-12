@@ -69,51 +69,44 @@ export const OrderProvider = ({ children }) => {
   const calculateDistance = async (from, to) => {
     if (!from || !to) return 0;
 
-    // Yandex Maps API'si henüz yüklenmediyse bekle
-    if (!window.ymaps || typeof window.ymaps.route !== 'function') {
-      console.warn("Yandex Maps API not loaded yet for distance calculation or route function unavailable.");
-      // Alternatif olarak Haversine kullanılabilir veya hata döndürülebilir
-      // Şimdilik Haversine ile devam edelim, ancak ideal olan API'nin yüklenmesini beklemek
-      const R = 6371; // Radius of the Earth in km
-      const dLat = (to.lat - from.lat) * Math.PI / 180;
-      const dLon = (to.lng - from.lng) * Math.PI / 180;
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(from.lat * Math.PI / 180) * Math.cos(to.lat * Math.PI / 180) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const haversineDistance = R * c;
-      console.warn(`Falling back to Haversine distance: ${haversineDistance.toFixed(2)} km`);
-      return haversineDistance;
+    // Try Google Maps API first
+    if (window.google && window.google.maps) {
+      try {
+        const directionsService = new google.maps.DirectionsService();
+        const result = await new Promise((resolve, reject) => {
+          directionsService.route({
+            origin: { lat: from.lat, lng: from.lng },
+            destination: { lat: to.lat, lng: to.lng },
+            travelMode: google.maps.TravelMode.DRIVING
+          }, (result, status) => {
+            if (status === 'OK') {
+              resolve(result);
+            } else {
+              reject(new Error(`Directions request failed due to ${status}`));
+            }
+          });
+        });
+        
+        const distanceInMeters = result.routes[0].legs[0].distance.value;
+        return distanceInMeters / 1000; // Convert to kilometers
+      } catch (error) {
+        console.error("Error calculating distance with Google Maps API:", error);
+        // Fall back to Haversine formula
+      }
     }
 
-    try {
-      const route = await window.ymaps.route([
-        [from.lat, from.lng],
-        [to.lat, to.lng]
-      ]);
-      const distanceInMeters = route.getLength();
-      return distanceInMeters / 1000; // Kilometreye çevir
-    } catch (error) {
-      console.error("Error calculating distance with Yandex Maps API:", error);
-      toast({
-        title: "Mesafe Hesaplama Hatası",
-        description: "Yandex Maps API ile mesafe hesaplanırken bir sorun oluştu. Lütfen tekrar deneyin.",
-        variant: "destructive",
-      });
-      // Hata durumunda Haversine formülü ile fallback yapılabilir veya 0 döndürülebilir.
-      const R = 6371;
-      const dLat = (to.lat - from.lat) * Math.PI / 180;
-      const dLon = (to.lng - from.lng) * Math.PI / 180;
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(from.lat * Math.PI / 180) * Math.cos(to.lat * Math.PI / 180) *
-        Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const haversineDistance = R * c;
-      console.warn(`Falling back to Haversine distance due to API error: ${haversineDistance.toFixed(2)} km`);
-      return haversineDistance;
-    }
+    // Fallback to Haversine formula
+    const R = 6371; // Radius of the Earth in km
+    const dLat = (to.lat - from.lat) * Math.PI / 180;
+    const dLon = (to.lng - from.lng) * Math.PI / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(from.lat * Math.PI / 180) * Math.cos(to.lat * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const haversineDistance = R * c;
+    console.warn(`Using Haversine distance: ${haversineDistance.toFixed(2)} km`);
+    return haversineDistance;
   };
 
   const calculatePrice = (distance, promoCode = null) => {
